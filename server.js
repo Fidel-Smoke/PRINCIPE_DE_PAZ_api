@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+require("dotenv").config();
 
 
 
@@ -146,6 +147,29 @@ app.get('/validarToken', (req, res) => {
             },
         });
     });
+});
+
+app.post("/api/generate", async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const response = await axios.post(
+      "https://api.openai.com/v1/completions",
+      {
+        model: "text-davinci-003",
+        prompt,
+        max_tokens: 100,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    res.json({ result: response.data.choices[0].text });
+  } catch (err) {
+    res.status(500).json({ error: "Error al generar contenido" });
+  }
 });
 
 
