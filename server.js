@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 
@@ -16,8 +17,8 @@ app.use(cors({
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password:"",
-    database:"principe_paz",
+    password: "",
+    database: "principe_paz",
 })
 
 db.connect((err) => {
@@ -77,6 +78,73 @@ app.post('/registro', (req, res) => {
                 return res.status(200).send("Usuario creado con éxito");
             });
         }
+    });
+});
+
+
+app.post('/login', (req, res) => {
+    const { user_email, user_password } = req.body;
+
+    if (!user_email || !user_password) {
+        return res.status(400).json({ error: "Email y contraseña son requeridos" });
+    }
+
+    db.query("SELECT * FROM usuarios WHERE user_email = ?", [user_email], (err, userResult) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Error del servidor" });
+        }
+
+        if (userResult.length === 0) {
+            return res.status(400).json({ error: "El usuario no existe, por favor registrese" });
+        }
+
+        const usuario = userResult[0];
+        bcrypt.compare(user_password, usuario.user_password, (err, isMatch) => {
+            if (err) {
+                console.log(err);
+                return res.status(500).json({ error: "Error al verificar la contraseña" });
+            }
+            if (isMatch) {
+
+                const secretKey = 'miClaveSecreta';
+
+                const token = jwt.sign({ id: usuario.id_usuario, email: usuario.user_email }, secretKey, { expiresIn: '1h' });
+
+                return res.status(200).json({
+                    message: "Inicio de sesión exitoso",
+                    token: token,
+                    user: {
+                        id: usuario.id,
+                        email: usuario.user_email,
+                    }
+                });
+            } else {
+                return res.status(400).json({ error: "Contraseña incorrecta" });
+            }
+        });
+    });
+});
+
+//FIN LOGIN
+
+
+// Middleware para verificar el token
+app.get('/validarToken', (req, res) => {
+    const token = req.headers['authorization'];
+
+    if (!token) return res.status(403).json({ error: 'Token no proporcionado' });
+
+    jwt.verify(token, 'miClaveSecreta', (err, decoded) => {
+        if (err) return res.status(401).json({ error: 'Token inválido' });
+
+        return res.status(200).json({
+            user: {
+                id: decoded.id,
+                email: decoded.email,
+                role: decoded.role,
+            },
+        });
     });
 });
 
