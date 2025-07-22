@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-06-2025 a las 19:17:30
+-- Tiempo de generación: 22-07-2025 a las 20:08:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,6 +24,31 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `estudiantes`
+--
+
+CREATE TABLE `estudiantes` (
+  `id` int(11) NOT NULL,
+  `nombre_estudiante` varchar(100) NOT NULL,
+  `documento_estudiante` varchar(50) NOT NULL,
+  `curso` varchar(50) NOT NULL,
+  `nombre_acudiente` varchar(100) NOT NULL,
+  `documento_acudiente` varchar(50) NOT NULL,
+  `valor_matricula` int(11) NOT NULL,
+  `valor_pension` int(11) NOT NULL,
+  `total_pagado` int(11) NOT NULL,
+  `valor_esperado` int(11) NOT NULL,
+  `deuda` int(11) NOT NULL,
+  `meses_pagados` text DEFAULT NULL,
+  `observaciones` text DEFAULT NULL,
+  `referencia_pago` varchar(100) DEFAULT NULL,
+  `es_docente` tinyint(1) DEFAULT 0,
+  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -39,12 +64,17 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id_usuarios`, `user_name`, `user_email`, `user_password`) VALUES
-(1, 'Fidel', 'fideljoseespi10@gmail.com', '$2a$10$FH8cd3vr11tH9VVGJZvYsuQw9SF3PYSejnmHTbHd6CSB0K5TAkFN.'),
-(2, 'Dilan', 'dilan@gmail.com', '$2a$10$WEsOBq5iEm1RaeUF5TIRG.aIQZbkbfquf5LdYcB7Xz9APlDIfkpw6');
+(7, 'Fidel', 'fideljoseespi10@gmail.com', '$2a$10$Cqmi32IfRGZ2kQJ1FGkRkOC8OxF5GSD5okuI.6P.bmSOCeZla0F/S');
 
 --
 -- Índices para tablas volcadas
 --
+
+--
+-- Indices de la tabla `estudiantes`
+--
+ALTER TABLE `estudiantes`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `usuarios`
@@ -57,10 +87,16 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `estudiantes`
+--
+ALTER TABLE `estudiantes`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id_usuarios` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_usuarios` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
