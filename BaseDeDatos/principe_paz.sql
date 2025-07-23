@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 22-07-2025 a las 20:08:29
+-- Tiempo de generación: 23-07-2025 a las 18:57:40
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,21 +29,23 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `estudiantes` (
   `id` int(11) NOT NULL,
-  `nombre_estudiante` varchar(100) NOT NULL,
-  `documento_estudiante` varchar(50) NOT NULL,
-  `curso` varchar(50) NOT NULL,
-  `nombre_acudiente` varchar(100) NOT NULL,
-  `documento_acudiente` varchar(50) NOT NULL,
-  `valor_matricula` int(11) NOT NULL,
-  `valor_pension` int(11) NOT NULL,
-  `total_pagado` int(11) NOT NULL,
-  `valor_esperado` int(11) NOT NULL,
-  `deuda` int(11) NOT NULL,
+  `nombre_estudiante` varchar(100) DEFAULT NULL,
+  `documento_estudiante` varchar(20) DEFAULT NULL,
+  `curso` varchar(20) DEFAULT NULL,
+  `nombre_acudiente` varchar(100) DEFAULT NULL,
+  `documento_acudiente` varchar(20) DEFAULT NULL,
+  `valor_matricula` int(11) DEFAULT NULL,
+  `valor_pension` int(11) DEFAULT NULL,
+  `valor_carne` int(11) DEFAULT NULL,
+  `valor_agenda` int(11) DEFAULT NULL,
+  `valor_seguro` int(11) DEFAULT NULL,
+  `total_pagado` int(11) DEFAULT NULL,
+  `valor_esperado` int(11) DEFAULT NULL,
+  `deuda` int(11) DEFAULT NULL,
   `meses_pagados` text DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
   `referencia_pago` varchar(100) DEFAULT NULL,
-  `es_docente` tinyint(1) DEFAULT 0,
-  `creado_en` timestamp NOT NULL DEFAULT current_timestamp()
+  `es_docente` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -74,7 +76,8 @@ INSERT INTO `usuarios` (`id_usuarios`, `user_name`, `user_email`, `user_password
 -- Indices de la tabla `estudiantes`
 --
 ALTER TABLE `estudiantes`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `documento_estudiante` (`documento_estudiante`);
 
 --
 -- Indices de la tabla `usuarios`
