@@ -143,7 +143,6 @@ app.put('/actualizarEstudiante/:id', (req, res) => {
 
     db.query('SELECT * FROM estudiantes WHERE documento_estudiante = ? AND id != ?', [documento_estudiante, id], (err, result) => {
         if (err) return res.status(500).send(err);
-        if (result.length > 0) return res.status(400).send('Ya existe otro estudiante con ese número de documento');
 
         const meses = Array.isArray(meses_pagados)
             ? meses_pagados
