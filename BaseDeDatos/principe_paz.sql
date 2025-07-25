@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-07-2025 a las 18:57:40
+-- Tiempo de generación: 25-07-2025 a las 16:33:27
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,44 +29,37 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `estudiantes` (
   `id` int(11) NOT NULL,
-  `nombre_estudiante` varchar(100) DEFAULT NULL,
-  `documento_estudiante` varchar(20) DEFAULT NULL,
-  `curso` varchar(20) DEFAULT NULL,
-  `nombre_acudiente` varchar(100) DEFAULT NULL,
-  `documento_acudiente` varchar(20) DEFAULT NULL,
-  `valor_matricula` int(11) DEFAULT NULL,
-  `valor_pension` int(11) DEFAULT NULL,
-  `valor_carne` int(11) DEFAULT NULL,
-  `valor_agenda` int(11) DEFAULT NULL,
-  `valor_seguro` int(11) DEFAULT NULL,
-  `total_pagado` int(11) DEFAULT NULL,
-  `valor_esperado` int(11) DEFAULT NULL,
-  `deuda` int(11) DEFAULT NULL,
+  `nombre_estudiante` varchar(100) NOT NULL,
+  `documento_estudiante` varchar(20) NOT NULL,
+  `curso` varchar(10) NOT NULL,
+  `nombre_acudiente` varchar(100) NOT NULL,
+  `documento_acudiente` varchar(20) NOT NULL,
+  `valor_matricula` int(11) DEFAULT 0,
+  `valor_pension` int(11) DEFAULT 0,
+  `valor_carne` int(11) DEFAULT 0,
+  `valor_agenda` int(11) DEFAULT 0,
+  `valor_seguro` int(11) DEFAULT 0,
+  `total_pagado` int(11) DEFAULT 0,
+  `valor_esperado` int(11) DEFAULT 0,
+  `deuda` int(11) DEFAULT 0,
   `meses_pagados` text DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
-  `referencia_pago` varchar(100) DEFAULT NULL,
-  `es_docente` tinyint(1) DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE `usuarios` (
-  `id_usuarios` int(11) NOT NULL,
-  `user_name` varchar(255) NOT NULL,
-  `user_email` varchar(255) NOT NULL,
-  `user_password` varchar(255) NOT NULL
+  `referencia_pago` varchar(50) DEFAULT NULL,
+  `es_docente` tinyint(1) DEFAULT 0,
+  `descuento_pension` float DEFAULT 0,
+  `carnet` tinyint(1) DEFAULT 1,
+  `agenda` tinyint(1) DEFAULT 1,
+  `seguro` tinyint(1) DEFAULT 1,
+  `fecha_creacion` timestamp NOT NULL DEFAULT current_timestamp(),
+  `recibo_caja` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Volcado de datos para la tabla `usuarios`
+-- Volcado de datos para la tabla `estudiantes`
 --
 
-INSERT INTO `usuarios` (`id_usuarios`, `user_name`, `user_email`, `user_password`) VALUES
-(7, 'Fidel', 'fideljoseespi10@gmail.com', '$2a$10$Cqmi32IfRGZ2kQJ1FGkRkOC8OxF5GSD5okuI.6P.bmSOCeZla0F/S');
+INSERT INTO `estudiantes` (`id`, `nombre_estudiante`, `documento_estudiante`, `curso`, `nombre_acudiente`, `documento_acudiente`, `valor_matricula`, `valor_pension`, `valor_carne`, `valor_agenda`, `valor_seguro`, `total_pagado`, `valor_esperado`, `deuda`, `meses_pagados`, `observaciones`, `referencia_pago`, `es_docente`, `descuento_pension`, `carnet`, `agenda`, `seguro`, `fecha_creacion`, `recibo_caja`) VALUES
+(1, 'Fidel', '1028662005', '1001', 'Catalina', '30657918', 341000, 301000, 21000, 42000, 0, 1909000, 3414000, 1505000, '[\"Febrero\",\"Marzo\",\"Abril\",\"Mayo\",\"Junio\"]', '', 'F.V', 0, 0, 1, 1, 0, '2025-07-25 14:28:00', 'R.C');
 
 --
 -- Índices para tablas volcadas
@@ -80,12 +73,6 @@ ALTER TABLE `estudiantes`
   ADD UNIQUE KEY `documento_estudiante` (`documento_estudiante`);
 
 --
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id_usuarios`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
@@ -93,13 +80,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `estudiantes`
 --
 ALTER TABLE `estudiantes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-  MODIFY `id_usuarios` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
