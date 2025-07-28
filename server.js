@@ -1,25 +1,30 @@
-
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-
+require('dotenv').config();
 const app = express();
-app.use(bodyParser.json());
-app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true }));
 
+const PORT = process.env.DB_PORT || 8080;
+
+// Middlewares
+app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true }));
+app.use(bodyParser.json());
+
+// Conexión a PostgreSQL
 const db = new Pool({
-    host: process.env.DATABASE_URL || 'localhost',
-    port: 5050,
-    user: 'postgres',
-    password: '12345',
-    database: 'principe_paz'
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'postgres',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_DATABASE || 'principe_paz',
+    ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
 db.connect()
-    .then(() => console.log('Conectado a PostgreSQL'))
-    .catch(err => console.error('Error al conectar a PostgreSQL:', err));
+    .then(() => console.log('✅ Conectado a PostgreSQL'))
+    .catch(err => console.error('❌ Error al conectar a PostgreSQL:', err));
 
+// Lógica de cálculo de valores
 function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension = 0, carnet = true, agenda = true, seguro = true) {
     const COSTOS_2025 = {
         "TR": { matricula: 397000, pension: 268000 },
@@ -44,11 +49,7 @@ function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension
     if (typeof curso === "string") {
         const match = curso.match(/^\d{3,4}$/);
         if (match) {
-            if (curso.length === 3) {
-                grado = curso.charAt(0);
-            } else if (curso.length === 4) {
-                grado = curso.substring(0, 2);
-            }
+            grado = curso.length === 3 ? curso.charAt(0) : curso.substring(0, 2);
         }
     }
 
@@ -69,45 +70,50 @@ function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension
     } else if (Array.isArray(meses_pagados_raw)) {
         meses = meses_pagados_raw;
     }
+
     meses = meses.filter(m => typeof m === 'string' && m.trim() !== "");
 
-    const valor_carne = CARNET;
-    const valor_agenda = AGENDA;
-    const valor_seguro = seguro ? SEGURO : 0;
+    const total_pagado = costos.matricula + (pension * meses.length)
+        + (carnet ? CARNET : 0)
+        + (agenda ? AGENDA : 0)
+        + (seguro ? SEGURO : 0);
 
-    const valor_pagado_carne = carnet ? CARNET : 0;
-    const valor_pagado_agenda = agenda ? AGENDA : 0;
-    const valor_pagado_seguro = seguro ? SEGURO : 0;
-
-    const total_pagado = costos.matricula + (pension * meses.length) + valor_pagado_carne + valor_pagado_agenda + valor_pagado_seguro;
-    const valor_esperado = costos.matricula + (pension * 10) + valor_carne + valor_agenda + valor_seguro;
-    const deuda = valor_esperado - total_pagado;
+    const valor_esperado = costos.matricula + (pension * 10) + CARNET + AGENDA + (seguro ? SEGURO : 0);
 
     return {
         valor_matricula: costos.matricula,
         valor_pension: pension,
-        valor_carne: valor_pagado_carne,
-        valor_agenda: valor_pagado_agenda,
-        valor_seguro: valor_pagado_seguro,
+        valor_carne: carnet ? CARNET : 0,
+        valor_agenda: agenda ? AGENDA : 0,
+        valor_seguro: seguro ? SEGURO : 0,
         total_pagado,
         valor_esperado,
-        deuda
+        deuda: valor_esperado - total_pagado
     };
 }
+
+// Rutas
+app.get('/', (req, res) => {
+    try {
+        res.send("✅ API COLEGIO PRÍNCIPE DE PAZ FUNCIONANDO");
+    } catch (err) {
+        console.error("Error en ruta /:", err);
+        res.status(500).send("Error en API");
+    }
+});
 
 app.get('/traerEstudiante', (req, res) => {
     const { curso } = req.query;
     let sql = 'SELECT * FROM estudiantes';
-    let params = [];
-    if (curso) {
-        sql += ' WHERE curso = $1';
-        params.push(curso);
-    }
+    const params = curso ? [curso] : [];
+    if (curso) sql += ' WHERE curso = $1';
+
     db.query(sql, params, (err, result) => {
         if (err) return res.status(500).send(err);
         res.json(result.rows);
     });
 });
+
 
 app.post('/crearEstudiante', (req, res) => {
     const {
@@ -226,6 +232,24 @@ app.delete('/eliminarEstudiante/:id', (req, res) => {
     });
 });
 
-app.listen(8080, () => {
-    console.log('Servidor corriendo en http://localhost:8080');
+app.get('/', (req, res) => {
+    res.send("Api de master barber :)");
 });
+
+function getLocalIP() {
+    const interfaces = os.networkInterfaces();
+    for (const name in interfaces) {
+        for (const iface of interfaces[name]) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address;
+            }
+        }
+    }
+    return 'localhost';
+}
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+});
+
