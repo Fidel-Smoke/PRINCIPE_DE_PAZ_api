@@ -7,11 +7,9 @@ const app = express();
 
 const PORT = process.env.DB_PORT || 8080;
 
-// Middlewares
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true }));
 app.use(bodyParser.json());
 
-// Conexión a PostgreSQL
 const db = new Pool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'postgres',
@@ -24,7 +22,6 @@ db.connect()
     .then(() => console.log('✅ Conectado a PostgreSQL'))
     .catch(err => console.error('❌ Error al conectar a PostgreSQL:', err));
 
-// Lógica de cálculo de valores
 function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension = 0, carnet = true, agenda = true, seguro = true) {
     const COSTOS_2025 = {
         "TR": { matricula: 397000, pension: 268000 },
@@ -92,7 +89,6 @@ function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension
     };
 }
 
-// Rutas
 app.get('/', (req, res) => {
     try {
         res.send("✅ API COLEGIO PRÍNCIPE DE PAZ FUNCIONANDO");
@@ -236,17 +232,6 @@ app.get('/', (req, res) => {
     res.send("Api de master barber :)");
 });
 
-function getLocalIP() {
-    const interfaces = os.networkInterfaces();
-    for (const name in interfaces) {
-        for (const iface of interfaces[name]) {
-            if (iface.family === 'IPv4' && !iface.internal) {
-                return iface.address;
-            }
-        }
-    }
-    return 'localhost';
-}
 
 // Iniciar el servidor
 app.listen(PORT, () => {
