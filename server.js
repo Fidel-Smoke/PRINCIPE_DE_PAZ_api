@@ -238,3 +238,7 @@ app.listen(PORT, () => {
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
 
+
+
+// TRUNCATE TABLE estudiantes RESTART IDENTITY; // Elimina todos los registros de la tabla estudiantes y reinicia el contador de ID
+
