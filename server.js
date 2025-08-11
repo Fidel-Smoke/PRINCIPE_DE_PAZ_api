@@ -240,5 +240,5 @@ app.listen(PORT, () => {
 
 
 
-// TRUNCATE TABLE estudiantes RESTART IDENTITY; // Elimina todos los registros de la tabla estudiantes y reinicia el contador de ID
+//ALTER SEQUENCE public.estudiantes_id_seq RESTART WITH 1; Reinicia el contador de ID en la tabla estudiantes
 
