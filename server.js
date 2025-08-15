@@ -136,10 +136,6 @@ app.post('/crearEstudiante', (req, res) => {
 
         const valores = calcularValores(curso, meses, es_docente, descuento_pension, carnet, agenda, seguro);
 
-        if (!/^\d+$/.test(documento_estudiante) || documento_estudiante.length < 8 || documento_estudiante.length > 10) {
-            return res.status(400).send('El número de documento debe tener entre 8 y 10 dígitos numéricos');
-        }
-
         const query = `
             INSERT INTO estudiantes (
                 nombre_estudiante, documento_estudiante, curso,
