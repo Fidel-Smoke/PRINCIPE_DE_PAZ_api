@@ -22,7 +22,7 @@ db.connect()
     .then(() => console.log('✅ Conectado a PostgreSQL'))
     .catch(err => console.error('❌ Error al conectar a PostgreSQL:', err));
 
-function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension = 0, carnet = true, agenda = true, seguro = true) {
+function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension = 0, descuento_pesos = 0, carnet = true, agenda = true, seguro = true) {
     const COSTOS_2025 = {
         "TR": { matricula: 397000, pension: 268000 },
         "1": { matricula: 397000, pension: 290000 },
@@ -53,7 +53,10 @@ function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension
     const costos = COSTOS_2025[grado] || { matricula: 0, pension: 0 };
     let pension = es_docente ? Math.floor(costos.pension / 2) : costos.pension;
 
-    if (descuento_pension && !isNaN(descuento_pension) && descuento_pension > 0) {
+    // 👉 Primero descuento en pesos, luego porcentaje
+    if (descuento_pesos && !isNaN(descuento_pesos) && descuento_pesos > 0) {
+        pension = Math.max(0, pension - descuento_pesos);
+    } else if (descuento_pension && !isNaN(descuento_pension) && descuento_pension > 0) {
         pension = Math.floor(pension * (1 - (descuento_pension / 100)));
     }
 
@@ -89,6 +92,7 @@ function calcularValores(curso, meses_pagados_raw, es_docente, descuento_pension
     };
 }
 
+
 app.get('/', (req, res) => {
     try {
         res.send("✅ API COLEGIO PRÍNCIPE DE PAZ FUNCIONANDO");
@@ -118,6 +122,7 @@ app.post('/crearEstudiante', (req, res) => {
         meses_pagados, observaciones, referencia_pago,
         es_docente = false,
         descuento_pension = 0,
+        descuento_pesos = 0,
         carnet = true,
         agenda = true,
         seguro = true,
@@ -134,7 +139,7 @@ app.post('/crearEstudiante', (req, res) => {
                 ? JSON.parse(meses_pagados)
                 : [];
 
-        const valores = calcularValores(curso, meses, es_docente, descuento_pension, carnet, agenda, seguro);
+        const valores = calcularValores(curso, meses, es_docente, descuento_pension, descuento_pesos, carnet, agenda, seguro);
 
         const query = `
             INSERT INTO estudiantes (
@@ -144,11 +149,11 @@ app.post('/crearEstudiante', (req, res) => {
                 valor_agenda, valor_seguro,
                 total_pagado, valor_esperado, deuda,
                 meses_pagados, observaciones, referencia_pago, recibo_caja,
-                es_docente, descuento_pension, carnet, agenda, seguro
+                es_docente, descuento_pension, descuento_pesos, carnet, agenda, seguro
             ) VALUES (
                 $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
                 $11, $12, $13, $14, $15, $16, $17, $18,
-                $19, $20, $21, $22
+                $19, $20, $21, $22, $23
             )
         `;
 
@@ -159,7 +164,7 @@ app.post('/crearEstudiante', (req, res) => {
             valores.valor_agenda, valores.valor_seguro,
             valores.total_pagado, valores.valor_esperado, valores.deuda,
             JSON.stringify(meses), observaciones, referencia_pago, recibo_caja,
-            es_docente, descuento_pension, carnet, agenda, seguro
+            es_docente, descuento_pension, descuento_pesos, carnet, agenda, seguro
         ], (err) => {
             if (err) return res.status(500).send(err);
             res.sendStatus(201);
@@ -176,6 +181,7 @@ app.put('/actualizarEstudiante/:id', (req, res) => {
         meses_pagados, observaciones, referencia_pago,
         es_docente = false,
         descuento_pension = 0,
+        descuento_pesos = 0,
         carnet = true,
         agenda = true,
         seguro = true,
@@ -191,7 +197,7 @@ app.put('/actualizarEstudiante/:id', (req, res) => {
                 ? JSON.parse(meses_pagados)
                 : [];
 
-        const valores = calcularValores(curso, meses, es_docente, descuento_pension, carnet, agenda, seguro);
+        const valores = calcularValores(curso, meses, es_docente, descuento_pension, descuento_pesos, carnet, agenda, seguro);
 
         const query = `
             UPDATE estudiantes SET
@@ -201,8 +207,8 @@ app.put('/actualizarEstudiante/:id', (req, res) => {
                 valor_agenda = $9, valor_seguro = $10,
                 total_pagado = $11, valor_esperado = $12, deuda = $13,
                 meses_pagados = $14, observaciones = $15, referencia_pago = $16, recibo_caja = $17, es_docente = $18,
-                descuento_pension = $19, carnet = $20, agenda = $21, seguro = $22
-            WHERE id = $23
+                descuento_pension = $19, descuento_pesos = $20, carnet = $21, agenda = $22, seguro = $23
+            WHERE id = $24
         `;
 
         db.query(query, [
@@ -212,7 +218,7 @@ app.put('/actualizarEstudiante/:id', (req, res) => {
             valores.valor_agenda, valores.valor_seguro,
             valores.total_pagado, valores.valor_esperado, valores.deuda,
             JSON.stringify(meses), observaciones, referencia_pago, recibo_caja, es_docente,
-            descuento_pension, carnet, agenda, seguro,
+            descuento_pension, descuento_pesos, carnet, agenda, seguro,
             id
         ], (err) => {
             if (err) return res.status(500).send(err);
