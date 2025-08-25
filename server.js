@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 require('dotenv').config();
 const app = express();
 
-const PORT = process.env.DB_PORT || 8080;
+const PORT = process.env.DB_PORT || 5432;
 
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true }));
 app.use(bodyParser.json());
@@ -13,8 +13,8 @@ app.use(bodyParser.json());
 const db = new Pool({
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || 'principe_paz',
+    password: process.env.DB_PASSWORD || '12345',
+    database: process.env.DB_DATABASE || 'principe_paz_fe3e',
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
 });
 
