@@ -27,7 +27,6 @@ SET row_security = off;
 -- *not* creating schema, since initdb creates it
 
 
-ALTER SCHEMA public OWNER TO instancias;
 
 SET default_tablespace = '';
 
@@ -67,7 +66,6 @@ CREATE TABLE public.estudiantes (
 );
 
 
-ALTER TABLE public.estudiantes OWNER TO instancias;
 
 --
 -- TOC entry 217 (class 1259 OID 16507)
@@ -83,7 +81,6 @@ CREATE SEQUENCE public.estudiantes_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.estudiantes_id_seq OWNER TO instancias;
 
 --
 -- TOC entry 3388 (class 0 OID 0)
@@ -91,7 +88,6 @@ ALTER SEQUENCE public.estudiantes_id_seq OWNER TO instancias;
 -- Name: estudiantes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: instancias
 --
 
-ALTER SEQUENCE public.estudiantes_id_seq OWNED BY public.estudiantes.id;
 
 
 --
@@ -99,7 +95,6 @@ ALTER SEQUENCE public.estudiantes_id_seq OWNED BY public.estudiantes.id;
 -- Name: estudiantes id; Type: DEFAULT; Schema: public; Owner: instancias
 --
 
-ALTER TABLE ONLY public.estudiantes ALTER COLUMN id SET DEFAULT nextval('public.estudiantes_id_seq'::regclass);
 
 
 --
@@ -383,8 +378,6 @@ SELECT pg_catalog.setval('public.estudiantes_id_seq', 266, true);
 -- Name: estudiantes estudiantes_documento_estudiante_key; Type: CONSTRAINT; Schema: public; Owner: instancias
 --
 
-ALTER TABLE ONLY public.estudiantes
-    ADD CONSTRAINT estudiantes_documento_estudiante_key UNIQUE (documento_estudiante);
 
 
 --
@@ -392,16 +385,12 @@ ALTER TABLE ONLY public.estudiantes
 -- Name: estudiantes estudiantes_pkey; Type: CONSTRAINT; Schema: public; Owner: instancias
 --
 
-ALTER TABLE ONLY public.estudiantes
-    ADD CONSTRAINT estudiantes_pkey PRIMARY KEY (id);
-
 
 --
 -- TOC entry 2045 (class 826 OID 16391)
 -- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: -; Owner: postgres
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON SEQUENCES TO instancias;
 
 
 --
@@ -409,7 +398,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON SEQUENCES TO instancias;
 -- Name: DEFAULT PRIVILEGES FOR TYPES; Type: DEFAULT ACL; Schema: -; Owner: postgres
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON TYPES TO instancias;
 
 
 --
@@ -417,7 +405,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON TYPES TO instancias;
 -- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: -; Owner: postgres
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON FUNCTIONS TO instancias;
 
 
 --
@@ -425,7 +412,6 @@ ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON FUNCTIONS TO instancias;
 -- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: -; Owner: postgres
 --
 
-ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON TABLES TO instancias;
 
 
 -- Completed on 2025-08-27 08:47:29
